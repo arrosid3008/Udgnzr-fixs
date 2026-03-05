@@ -11,31 +11,50 @@ body {
     padding: 0;
 }
 
-/* 2. Cover Screen Logic */
+/* 2. Custom CSS Patterns untuk Monokrom yang Lebih Modern */
+.pattern-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+    background-size: 30px 30px;
+}
+
+.pattern-grid {
+    background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* 3. Efek Glassmorphism (Kaca Transparan) */
+.glass-effect {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* 4. Cover Screen Logic */
 #cover-screen {
     position: fixed;
     inset: 0;
-    z-index: 9999; /* Pastikan di paling atas */
+    z-index: 9999;
     transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.8s ease;
     background-size: cover;
     background-position: center;
 }
 
-/* Class ini akan dipicu oleh JavaScript */
 .cover-hidden {
     transform: translateY(-100%);
     opacity: 0;
     pointer-events: none;
 }
 
-/* 3. Hero & Image Effects */
+/* 5. Hero & Image Effects */
 .zoom-img-wrapper {
     overflow: hidden;
     position: relative;
 }
 
 .hero-bg {
-    transition: transform 0.1s ease-out; /* Untuk parallax halus */
+    transition: transform 0.1s ease-out;
     will-change: transform;
 }
 
@@ -44,10 +63,26 @@ body {
 }
 
 .zoom-img-wrapper:hover .zoom-img {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
-/* 4. Audio Controls */
+/* 6. Animasi Mengambang (Floating) */
+.floating-element {
+    animation: float 4s ease-in-out infinite;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.3s; }
+.delay-300 { animation-delay: 0.5s; }
+.delay-400 { animation-delay: 0.7s; }
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+/* 7. Audio Controls */
 #audio-control {
     cursor: pointer;
     transition: all 0.3s ease;
@@ -59,7 +94,7 @@ body {
 
 .audio-paused {
     animation-play-state: paused;
-    opacity: 0.7;
+    opacity: 0.5;
 }
 
 @keyframes spin {
@@ -67,28 +102,23 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* 5. Custom Scrollbar for Messages */
+/* 8. Custom Scrollbar for Messages */
 .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #f8fafc;
+    border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #000;
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
-/* 6. Form Animations */
-.slide-down {
-    animation: slideIn 0.5s ease forwards;
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 7. Typography Adjustments */
+/* 9. Typography Adjustments */
 .font-style-italic {
     font-style: italic;
 }
