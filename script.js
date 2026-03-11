@@ -11,7 +11,22 @@ let replyToId = null; // Menyimpan ID pesan yang sedang di-reply
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // 1. THEME TOGGLE (Fungsi tetap ada agar tidak error jika tombolnya Anda nyalakan lagi di HTML)
+    /* =========================================================
+       REVISI 5: BACA PARAMETER URL (?to=Nama Tamu) 
+       ========================================================= */
+    const urlParams = new URLSearchParams(window.location.search);
+    const guestName = urlParams.get('to');
+    const guestNameEl = document.getElementById('guest-name');
+    
+    if(guestNameEl) {
+        if(guestName && guestName.trim() !== '') {
+            guestNameEl.innerText = guestName; // Jika ada parameter di link
+        } else {
+            guestNameEl.innerText = "Tamu Undangan"; // Jika link tanpa parameter
+        }
+    }
+
+    // 1. THEME TOGGLE
     const themeBtn = document.getElementById('theme-toggle');
     const body = document.body;
     if(themeBtn) {
@@ -51,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(btnOpen) {
         btnOpen.addEventListener('click', (e) => {
-            // TRIGGER EFEK CONFETTI BURST
             triggerConfetti(e.clientX, e.clientY);
 
             setTimeout(() => {
@@ -63,12 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     bottomNav.classList.remove('hidden');
                     if(musicBtn) musicBtn.classList.remove('hidden');
                     
-                    // INIT EFEK DAUN JATUH (DELAYED & MULTI-COLOR)
                     initParticles();
                 }, 800);
 
                 if (!isPlaying) toggleMusic();
-            }, 400); // Delay sedikit agar confetti terlihat dulu
+            }, 400); 
         });
     }
 
@@ -136,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         lastScrollY = currentScrollY;
     });
 
-    // 5. INIT SWIPER (Gallery) - Sama persis
+    // 5. INIT SWIPER (Gallery)
     if(typeof Swiper !== 'undefined') {
         new Swiper('.mySwiper', {
             effect: "coverflow",
@@ -218,14 +231,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if(!nama || !kehadiran || !pesan) return;
 
+            /* Merekam waktu untuk dimasukkan ke Chat Wishes */
+            const now = new Date();
+            const timeStr = now.toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+
             const entry = { 
                 id: Date.now().toString(), 
                 nama, kehadiran, pesan,
-                replyTo: replyToId // Simpan ID pesan yang direply (jika ada)
+                waktu: timeStr, // Data tambahan untuk jam/tanggal
+                replyTo: replyToId
             };
             
             const existingData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            existingData.push(entry); // Push ke bawah (timeline chat)
+            existingData.push(entry); 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(existingData));
 
             renderChat(STORAGE_KEY);
@@ -233,7 +251,6 @@ document.addEventListener("DOMContentLoaded", () => {
             cancelReplyChat();
             showToast("Terima kasih atas ucapan dan doanya!");
 
-            // Scroll otomatis ke bawah list chat
             const chatList = document.getElementById('wishes-list');
             if(chatList) {
                 setTimeout(() => chatList.scrollTop = chatList.scrollHeight, 100);
@@ -264,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// --- FUNGSI GLOBAL (Bisa dipanggil di HTML) ---
+// --- FUNGSI GLOBAL ---
 
 // FUNGSI RENDER CHAT
 window.renderChat = function(storageKey) {
@@ -289,13 +306,18 @@ window.renderChat = function(storageKey) {
             }
         }
 
-        const badgeClass = item.kehadiran === 'Hadir' ? 'hadir' : 'absen';
+        const badgeClass = item.kehadiran === 'Hadir' ? 'badge-hadir' : 'badge-absen';
+        const displayTime = item.waktu || 'Baru saja';
+        
         const card = document.createElement('div');
-        card.className = 'chat-bubble';
+        card.className = 'chat-bubble'; // Merubah class mengikuti UI baru
         card.innerHTML = `
             ${quoteHtml}
             <div class="chat-header">
-                <span class="chat-name">${item.nama}</span>
+                <div class="chat-info">
+                    <span class="chat-name">${item.nama}</span>
+                    <span class="chat-time">${displayTime}</span>
+                </div>
                 <span class="chat-badge ${badgeClass}"><i class="fas ${item.kehadiran==='Hadir'?'fa-check-circle':'fa-times-circle'}"></i> ${item.kehadiran}</span>
             </div>
             <div class="chat-text">${item.pesan}</div>
@@ -305,7 +327,6 @@ window.renderChat = function(storageKey) {
     });
 };
 
-// Fungsi klik tombol balas
 window.setReplyChat = function(id, nama, pesan) {
     replyToId = id;
     const indicator = document.getElementById('reply-indicator');
@@ -353,18 +374,17 @@ window.showToast = function(message) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 };
 
-// EFEK DAUN JATUH MULTI-WARNA
+// EFEK DAUN JATUH LEBIH NATURAL
 window.initParticles = function() {
     const container = document.getElementById('particles-container');
     if(!container) return;
     container.innerHTML = '';
     
-    // Warna: Peach, Putih, Pink Lembut, Merah Pudar
-    const colors = ['#FFDAB9', '#FFFFFF', '#FFB6C1', '#ff9999'];
-    const particleCount = 40; 
+    // Warna alam: Hijau, Kuning, dan sedikit warna pudar agar seperti di taman
+    const colors = ['#4CAF50', '#8BC34A', '#FFEB3B', '#FDD835', '#A5D6A7'];
+    const particleCount = 45; // Diperbanyak agar sedikit lebih ramai
     
     for (let i = 0; i < particleCount; i++) {
-        // Delay kemunculan agar tidak langsung muncul semua
         setTimeout(() => createParticle(container, colors), Math.random() * 5000);
     }
 };
@@ -373,26 +393,27 @@ function createParticle(container, colors) {
     const leaf = document.createElement('div');
     leaf.classList.add('leaf'); 
     
-    // Set warna random
     const randColor = colors[Math.floor(Math.random() * colors.length)];
-    leaf.style.setProperty('--leaf-color', randColor);
+    leaf.style.backgroundColor = randColor;
     
     leaf.style.left = Math.random() * 100 + '%';
-    const size = Math.random() * 10 + 10; 
+    const size = Math.random() * 12 + 10; // Ukuran bervariasi
     leaf.style.width = size + 'px';
-    leaf.style.height = size + 'px';
+    leaf.style.height = (size * 1.5) + 'px'; // Bentuk lonjong seperti daun asli
     
-    const duration = Math.random() * 10 + 10; 
+    const duration = Math.random() * 8 + 8; // Waktu jatuh lebih pelan dan natural
     leaf.style.animationDuration = duration + 's';
     
-    const swayX = (Math.random() * 150 - 75) + 'px'; 
-    const rot = (Math.random() * 720) + 'deg'; 
+    // Pergerakan sway ke kanan/kiri
+    const swayX = (Math.random() * 200 - 100) + 'px'; 
+    const rot = (Math.random() * 500 + 100) + 'deg'; 
     
     leaf.style.setProperty('--sway-x', swayX);
     leaf.style.setProperty('--rot', rot);
     
     container.appendChild(leaf);
 
+    // Animasi kontinu (loop tak putus)
     leaf.addEventListener('animationend', () => {
         leaf.remove();
         createParticle(container, colors);
@@ -401,7 +422,6 @@ function createParticle(container, colors) {
 
 // EFEK CONFETTI BURST
 window.triggerConfetti = function(x, y) {
-    // Buat container jika belum ada di HTML
     let container = document.getElementById('confetti-container');
     if(!container) {
         container = document.createElement('div');
@@ -415,12 +435,10 @@ window.triggerConfetti = function(x, y) {
         const confetti = document.createElement('div');
         confetti.classList.add('confetti');
         
-        // Atur posisi awal persis di titik klik
         confetti.style.left = x + 'px';
         confetti.style.top = y + 'px';
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         
-        // Hitung arah sebar (burst)
         const angle = Math.random() * Math.PI * 2;
         const velocity = 50 + Math.random() * 100;
         const dx = Math.cos(angle) * velocity + 'px';

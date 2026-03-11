@@ -1,7 +1,7 @@
-/* ROOT VARIABLES */
+/* ROOT VARIABLES & DARK MODE */
 :root {
     --bg-primary: #ffffff;
-    --bg-secondary: #f9f6f0; /* Lebih warm */
+    --bg-secondary: #f9f6f0;
     --text-main: #333333;
     --text-muted: #666666;
     --accent: #b59551;
@@ -9,12 +9,11 @@
     --card-bg: #ffffff;
     --shadow: 0 8px 25px rgba(0,0,0,0.06);
     --glass-bg: rgba(255, 255, 255, 0.7);
-    --blob-color: rgba(181, 149, 81, 0.05); /* Soft blob color */
+    --blob-color: rgba(181, 149, 81, 0.05);
 }
 
-/* DARK MODE VARIABLES */
 .dark-mode {
-    --bg-primary: #121212;
+    --bg-primary: #121212;     /* Warna background Hitam Default */
     --bg-secondary: #1a1a1a;
     --text-main: #e0e0e0;
     --text-muted: #a0a0a0;
@@ -24,15 +23,17 @@
     --shadow: 0 8px 25px rgba(0,0,0,0.4);
     --glass-bg: rgba(30, 30, 30, 0.7);
     --blob-color: rgba(212, 175, 55, 0.03);
+    
+    /* Variabel baru untuk warna Abu-Abu Lembut di section bergantian */
+    --bg-gray: #1e1e1e; 
 }
 
 /* BASE */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-    /* FONT HANDWRITING UTAMA */
     font-family: 'Caveat', cursive;
-    font-size: 1.2rem; /* Diperbesar sedikit agar mudah dibaca */
+    font-size: 1.2rem;
     background-color: var(--bg-primary);
     color: var(--text-main);
     line-height: 1.6;
@@ -40,7 +41,6 @@ body {
     overflow-x: hidden;
 }
 
-/* PENGECUALIAN FONT: NAMA DAN HEADING TERTENTU */
 h1, h2, h3, .closing-names, .person h3, .couple-name-large, #guest-name { 
     font-family: 'Playfair Display', serif; 
     color: var(--accent); 
@@ -57,7 +57,7 @@ h1, h2, h3, .closing-names, .person h3, .couple-name-large, #guest-name {
 .pb-0 { padding-bottom: 0 !important; }
 .w-100 { width: 100%; }
 
-/* CONTAINER & BACKGROUND SECTION GRADIEN + BLOB */
+/* CONTAINER */
 .app-container { 
     max-width: 600px; 
     margin: 0 auto; 
@@ -68,40 +68,45 @@ h1, h2, h3, .closing-names, .person h3, .couple-name-large, #guest-name {
     z-index: 2; 
 }
 
+/* ======================================================
+REVISI 1: BACKGROUND BERGANTIAN & EFEK CURVE MENEMBUS
+======================================================
+*/
 .section { 
     padding: 5rem 1.5rem; 
-    border-bottom: 1px solid var(--border-color); 
+    border-bottom: none; /* Dihilangkan agar curve terlihat menyatu */
     position: relative;
     overflow: hidden;
-    /* Soft Gradient Background */
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    background: var(--bg-primary); /* Default Hitam */
+}
+
+/* Bagian yang diubah menjadi ABU-ABU (Couple, Quran, Gallery, Gift) dengan Curve ke atas */
+.dark-mode #hero-couple,
+.dark-mode #quran, 
+.dark-mode #gallery, 
+.dark-mode #gift {
+    background: var(--bg-gray);
+    position: relative;
+    z-index: 10;
+    margin-top: -50px; /* Menarik section abu-abu naik menembus section hitam di atasnya */
+    padding-top: calc(5rem + 50px);
+    /* Membuat bentuk curve / gelombang rapi di bagian atas tanpa merusak HTML */
+    border-radius: 50% 50% 0 0 / 50px 50px 0 0; 
+    box-shadow: 0 -10px 20px rgba(0,0,0,0.1);
+}
+/* Agar urutan couple ke quran tidak dobel curve, reset quran */
+.dark-mode #quran {
+    margin-top: 0;
+    padding-top: 5rem;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 /* Blob Shape Dekoratif */
-.section::before, .section::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    background: var(--blob-color);
-    z-index: 0;
-    pointer-events: none;
-}
-.section::before {
-    width: 300px;
-    height: 300px;
-    top: -100px;
-    left: -100px;
-    filter: blur(40px);
-}
-.section::after {
-    width: 250px;
-    height: 250px;
-    bottom: -50px;
-    right: -80px;
-    filter: blur(30px);
-}
-
-.section > * { position: relative; z-index: 1; } /* Pastikan konten di atas blob */
+.section::before, .section::after { content: ''; position: absolute; border-radius: 50%; background: var(--blob-color); z-index: 0; pointer-events: none; }
+.section::before { width: 300px; height: 300px; top: -100px; left: -100px; filter: blur(40px); }
+.section::after { width: 250px; height: 250px; bottom: -50px; right: -80px; filter: blur(30px); }
+.section > * { position: relative; z-index: 1; }
 
 .section-title { margin-bottom: 2.5rem; }
 .section-title h2 { font-size: 2.2rem; position: relative; display: inline-block; padding-bottom: 10px; }
@@ -109,73 +114,55 @@ h1, h2, h3, .closing-names, .person h3, .couple-name-large, #guest-name {
 
 /* BUTTONS & ANIMATIONS */
 button { font-family: inherit; cursor: pointer; border: none; outline: none; }
-.btn-primary { 
-    background: var(--accent); 
-    color: #fff; 
-    padding: 12px 28px; 
-    border-radius: 30px; 
-    font-weight: 600; 
-    font-size: 1.2rem; /* Disesuaikan untuk Caveat */
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 10px; 
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    box-shadow: 0 4px 15px rgba(181, 149, 81, 0.3); 
-    /* Floating Effect Default */
-    animation: floatBtn 3s ease-in-out infinite;
-}
+.btn-primary { background: var(--accent); color: #fff; padding: 12px 28px; border-radius: 30px; font-weight: 600; font-size: 1.2rem; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 15px rgba(181, 149, 81, 0.3); animation: floatBtn 3s ease-in-out infinite; }
+.btn-primary:hover { opacity: 0.95; transform: scale(1.05) translateY(-3px); box-shadow: 0 8px 25px rgba(181, 149, 81, 0.5); }
 
-/* Hover Effect Button */
-.btn-primary:hover { 
-    opacity: 0.95; 
-    transform: scale(1.05) translateY(-3px); 
-    box-shadow: 0 8px 25px rgba(181, 149, 81, 0.5); 
-}
-
-@keyframes floatBtn {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); }
-    100% { transform: translateY(0px); }
-}
+@keyframes floatBtn { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
 
 .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 25px; font-size: 1.1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; transition: 0.3s; }
 .btn-secondary:hover { background: var(--accent); color: #fff; transform: translateY(-3px); }
 
 .pulse-btn { animation: pulseBtn 2s infinite, floatBtn 3s ease-in-out infinite; }
-@keyframes pulseBtn {
-    0% { box-shadow: 0 0 0 0 rgba(181, 149, 81, 0.7); }
-    70% { box-shadow: 0 0 0 15px rgba(181, 149, 81, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(181, 149, 81, 0); }
-}
+@keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(181, 149, 81, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(181, 149, 81, 0); } 100% { box-shadow: 0 0 0 0 rgba(181, 149, 81, 0); } }
 
-/* THEME TOGGLE */
 .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; background: var(--glass-bg); backdrop-filter: blur(5px); color: var(--accent); width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--accent); font-size: 1.2rem; box-shadow: var(--shadow); transition: 0.3s; }
 .theme-toggle:hover { transform: rotate(180deg) scale(1.1); }
 
-/* FLOATING MUSIC BUTTON */
 .floating-music { position: fixed; bottom: 90px; right: 20px; z-index: 998; background: var(--card-bg); color: var(--accent); width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); transition: all 0.3s ease; }
 .floating-music:hover { transform: scale(1.1); }
 .floating-music.playing i { animation: spinDisk 3s linear infinite; }
 @keyframes spinDisk { 100% { transform: rotate(360deg); } }
 
-/* OPENING SCREEN */
-#opening-screen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(assets/img/ftbg.jpeg) center/cover no-repeat fixed; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s; }
+/* ======================================================
+REVISI 2: OVERLAY OPENING DAN HOME (Menyatu Tema)
+======================================================
+*/
+#opening-screen { 
+    position: fixed; inset: 0; z-index: 9999; 
+    /* Gradient Hitam Transparan Agar Menyatu Tema */
+    background: linear-gradient(rgba(18, 18, 18, 0.6), rgba(18, 18, 18, 0.85)), url(assets/img/ftbg.jpeg) center/cover no-repeat fixed; 
+    display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s; 
+}
 #opening-screen.slide-up { transform: translateY(-100%); opacity: 0; pointer-events: none; }
-.opening-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 1; }
+.opening-overlay { display: none; /* Dihapus karena sudah pakai gradient di background */ }
 .opening-content { position: relative; z-index: 2; text-align: center; color: #fff; width: 100%; padding: 20px; }
 .opening-title h1 { font-size: 3.5rem; color: #fff; margin-bottom: 25px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-.guest-info { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 25px 20px; border-radius: 20px; margin-bottom: 35px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s; }
+.guest-info { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); padding: 25px 20px; border-radius: 20px; margin-bottom: 35px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s; }
 .guest-info:hover { transform: scale(1.02); }
 #guest-name { color: var(--accent); font-size: 2rem; margin-top: 10px; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); }
 
-/* HERO */
-#hero { height: 100vh; background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%), url(assets/img/hero.jpeg) center/cover no-repeat fixed; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 20px; border-bottom: none; }
+#hero { 
+    height: 100vh; 
+    /* Gradient Hitam Transparan Agar Menyatu Tema */
+    background: linear-gradient(to bottom, rgba(18, 18, 18, 0.5) 0%, rgba(18, 18, 18, 0.9) 100%), url(assets/img/hero.jpeg) center/cover no-repeat fixed; 
+    position: relative; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 20px; border-bottom: none; 
+    opacity: 0; transform: translateY(40px); transition: all 1.2s ease;
+}
+.hero-overlay { display: none; /* Dihapus karena sudah pakai gradient */ }
 .hero-content { position: relative; z-index: 2; max-width: 700px; color: #fff; }
 .subtitle { font-family: 'Playfair Display', serif; font-size: 1rem; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 20px; opacity: 0.9; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); }
 .couple-name-large { font-size: clamp(3rem, 8vw, 5rem); line-height: 1.2; color: var(--accent); margin-bottom: 1.5rem; font-weight: 600; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
 .date { font-family: 'Playfair Display', serif; font-size: 1.3rem; letter-spacing: 8px; opacity: 0.9; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); }
-#hero { opacity: 0; transform: translateY(40px); transition: all 1.2s ease; }
 #hero.hero-active { opacity: 1; transform: translateY(0); }
 
 /* QURAN */
@@ -233,103 +220,66 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 .timeline-item h4 { font-size: 1.1rem; color: var(--accent); margin-bottom: 5px; }
 .timeline-item p { font-size: 1.2rem; color: var(--text-muted); text-align: justify; line-height: 1.7; }
 
-/* ========================================================================= */
-/* REDESAIN GIFT - ATM CARD & PHYSICAL GIFT CARD                             */
-/* ========================================================================= */
-.gift-container {
-    transition: all 0.5s ease-in-out;
-    opacity: 1;
-    transform: translateY(0);
-}
-.gift-container.hidden-anim {
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
-    position: absolute; /* Mencegah memakan tempat saat disembunyikan */
-    visibility: hidden;
-}
-
-.atm-card { 
-    background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%);
-    border: 1px solid var(--border-color); 
-    border-radius: 20px; /* Sesuai request: Border-radius besar 16px - 20px */
-    padding: 25px; 
-    box-shadow: var(--shadow); 
-    transition: transform 0.3s, box-shadow 0.3s;
-    position: relative;
-    overflow: hidden;
-    text-align: left;
-}
-.atm-card:hover { 
-    transform: translateY(-5px); 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
-}
-/* Memberikan aksen garis halus di card ATM */
-.atm-card::after {
-    content: ''; position: absolute; top: 0; right: 0;
-    width: 150px; height: 150px;
-    background: radial-gradient(circle, rgba(181,149,81,0.1) 0%, transparent 70%);
-    border-radius: 50%; top: -50px; right: -50px; pointer-events: none;
-}
-
-.atm-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
+/* GIFT */
+.gift-container { transition: all 0.5s ease-in-out; opacity: 1; transform: translateY(0); }
+.gift-container.hidden-anim { opacity: 0; transform: translateY(20px); pointer-events: none; position: absolute; visibility: hidden; }
+.atm-card { background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; box-shadow: var(--shadow); transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; text-align: left; }
+.atm-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+.atm-card::after { content: ''; position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: radial-gradient(circle, rgba(181,149,81,0.1) 0%, transparent 70%); border-radius: 50%; top: -50px; right: -50px; pointer-events: none; }
+.atm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 .chip-icon { font-size: 2.2rem; color: #d4af37; opacity: 0.8; }
 .bank-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
-
 .atm-body { text-align: center; margin-bottom: 25px; }
-.atm-number { 
-    font-family: 'Courier New', Courier, monospace; /* Font monospace untuk nomor rekening agar terlihat seperti ATM asli */
-    font-size: 1.8rem; 
-    font-weight: 700; 
-    color: var(--accent); 
-    letter-spacing: 4px;
-    margin-bottom: 5px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
+.atm-number { font-family: 'Courier New', Courier, monospace; font-size: 1.8rem; font-weight: 700; color: var(--accent); letter-spacing: 4px; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
 .atm-owner { font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
-
 .atm-address { font-size: 1.1rem; color: var(--text-muted); line-height: 1.4; text-transform: none; margin-top: 10px;}
-
-.btn-copy-atm { 
-    width: 100%;
-    background: transparent; 
-    border: 1px dashed var(--accent); 
-    color: var(--accent); 
-    padding: 12px; 
-    border-radius: 12px; 
-    font-size: 1.1rem; 
-    transition: all 0.3s; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    gap: 8px; 
-}
+.btn-copy-atm { width: 100%; background: transparent; border: 1px dashed var(--accent); color: var(--accent); padding: 12px; border-radius: 12px; font-size: 1.1rem; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-copy-atm:hover { background: var(--accent); color: #fff; transform: scale(1.02); }
-
 .physical-gift-card { border-left: 5px solid var(--accent); }
 
 /* RSVP */
 .rsvp-form { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
 .rsvp-form input, .rsvp-form select, .rsvp-form textarea { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-secondary); color: var(--text-main); font-family: inherit; font-size: 1.1rem; transition: border-color 0.3s; }
 .rsvp-form input:focus, .rsvp-form select:focus, .rsvp-form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(181, 149, 81, 0.1); }
-.wish-item { background: var(--card-bg); padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid var(--accent); box-shadow: var(--shadow); animation: slideIn 0.5s ease-out; }
+
+/* ======================================================
+REVISI 3: PEMBATAS CHAT BUBBLES YANG RAPI
+======================================================
+*/
+.chat-bubble { 
+    background: var(--card-bg); 
+    padding: 20px; 
+    border-radius: 15px; 
+    margin-bottom: 15px; 
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--accent); 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Shadow lembut */
+    animation: slideIn 0.5s ease-out; 
+    text-align: left;
+}
 @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.wish-name { font-weight: 600; font-size: 1.2rem; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; color: var(--text-main); }
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--border-color); /* Pembatas info dan teks */
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+.chat-info { display: flex; flex-direction: column; }
+.chat-name { font-weight: 600; font-size: 1.2rem; color: var(--text-main); }
+.chat-time { font-family: sans-serif; font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;}
 .badge-hadir { font-family: sans-serif; background: rgba(46, 204, 113, 0.15); color: #27ae60; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
 .badge-absen { font-family: sans-serif; background: rgba(231, 76, 60, 0.15); color: #c0392b; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-.wish-text { font-size: 1.2rem; color: var(--text-muted); line-height: 1.6; }
+.chat-text { font-size: 1.2rem; color: var(--text-muted); line-height: 1.6; margin-top: 5px;}
+.chat-quote { background: var(--bg-secondary); padding: 8px 12px; border-left: 3px solid var(--accent); font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; border-radius: 5px; }
+.btn-reply-chat { background: transparent; border: none; color: var(--accent); font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px;}
 
 /* CLOSING & FOOTER */
 .closing-container { padding: 3rem 1rem; }
 .closing-names { font-size: 2.8rem; margin-bottom: 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
 .site-footer { background-color: var(--bg-secondary); color: var(--text-muted); text-align: center; padding: 4rem 1.5rem 7rem 1.5rem; border-top: 1px solid var(--border-color); position: relative;}
 .site-footer h3 { font-size: 1.8rem; color: var(--accent); margin-bottom: 10px; font-family: 'Playfair Display', serif; }
-/* Subtle footer Made By */
 .footer-made-by p { font-family: sans-serif; font-size: 0.75rem; color: var(--text-muted); opacity: 0.7; letter-spacing: 0.5px;}
 
 /* BOTTOM NAV */
@@ -352,35 +302,23 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 .slide-left { transform: translateX(40px); }
 .delay-1 { transition-delay: 0.3s; }
 
-/* ========================================================================= */
-/* EFEK DAUN JATUH (FALLING LEAVES) - CONTINUOUS & NATURAL                   */
-/* ========================================================================= */
-#particles-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 997; 
-    pointer-events: none; 
-    overflow: hidden;
-}
-
+/* ======================================================
+REVISI 4: EFEK DAUN JATUH (LEBIH NATURAL)
+======================================================
+*/
+#particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 997; pointer-events: none; overflow: hidden; }
 .leaf { 
     position: absolute; 
     top: -10%; 
-    background-color: var(--accent); 
-    opacity: 0.7; 
-    /* Membuat bentuk seperti daun dengan border-radius */
-    border-radius: 0 50% 0 50%; 
+    opacity: 0.8; 
+    border-radius: 0 50% 0 50%; /* Membentuk Daun */
     animation: fallLeaf linear forwards; 
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.1); 
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2); 
     will-change: transform;
 }
-
-.dark-mode .leaf { opacity: 0.4; }
-
 @keyframes fallLeaf {
+    /* Animasi daun bergerak sedikit ke kiri & kanan (sway) dan berputar natural */
     0% { transform: translate3d(0, -10vh, 0) rotate(0deg) scale(0.8); }
-    100% { transform: translate3d(var(--sway-x, 20px), 110vh, 0) rotate(var(--rot, 360deg)) scale(1.2); }
+    50% { transform: translate3d(calc(var(--sway-x) / 2), 50vh, 0) rotate(calc(var(--rot) / 2)) scale(1); }
+    100% { transform: translate3d(var(--sway-x), 110vh, 0) rotate(var(--rot)) scale(1.2); }
 }
