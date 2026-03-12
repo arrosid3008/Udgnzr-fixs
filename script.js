@@ -1,4 +1,3 @@
-// --- CONFIGURASI DATA ---
 const CONFIG = {
     eventTitle: "Pernikahan Arrosid & Zumrotus",
     eventStartUTC: "20260405T010000Z", 
@@ -6,6 +5,9 @@ const CONFIG = {
     eventLocation: "GOR Jatimekar, Bandung",
     eventDesc: "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir."
 };
+
+// URL GOOGLE APPS SCRIPT WEB APP 
+const scriptURL = 'URL_WEB_APP_GOOGLE_SCRIPT_DI_SINI';
 
 let replyToId = null; 
 
@@ -75,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 4. Video Interaction (Pause music when video plays)
+    // 4. Video Interaction
     const storyVideo = document.getElementById('story-video');
     if(storyVideo) {
         storyVideo.addEventListener('play', () => {
@@ -99,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         storyVideo.addEventListener('ended', resumeMusic);
     }
 
-    // 5. Scroll Reveal Animation (Intersection Observer)
+    // 5. Scroll Reveal Animation
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -118,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         heroObserver.observe(heroSection);
     }
 
-    // 6. Smart Bottom Nav (Hide on scroll down)
+    // 6. Smart Bottom Nav
     let lastScrollY = window.scrollY;
     let ticking = false;
     window.addEventListener('scroll', () => {
@@ -185,8 +187,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     }
 
-    // 10. RSVP Form & LocalStorage Logic
+    // 10. RSVP Form dengan FETCH ke Google Sheets
     const rsvpForm = document.getElementById('rsvp-form');
+    const formGSheet = document.forms['submit-to-google-sheet'];
+    const btnSubmitRsvp = document.getElementById('btn-submit-rsvp');
+    
     const STORAGE_KEY = 'rsvp_chat_v1';
     renderChat(STORAGE_KEY);
 
@@ -196,31 +201,52 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const nama = document.getElementById('rsvp-name').value.trim();
             const kehadiran = document.getElementById('rsvp-attendance').value;
+            const jumlah = document.getElementById('rsvp-jumlah').value;
             const pesan = document.getElementById('rsvp-message').value.trim();
 
-            if(!nama || !kehadiran || !pesan) return;
+            if(!nama || !kehadiran || !jumlah || !pesan) return;
 
-            const now = new Date();
-            const timeStr = now.toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+            // Efek Loading pada tombol
+            const originalBtnText = btnSubmitRsvp.innerHTML;
+            btnSubmitRsvp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            btnSubmitRsvp.disabled = true;
 
-            const entry = { 
-                id: Date.now().toString(), 
-                nama, kehadiran, pesan,
-                waktu: timeStr,
-                replyTo: replyToId 
-            };
-            
-            const existingData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            existingData.push(entry); 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(existingData));
+            // Fetch Data ke Google Sheets
+            fetch(scriptURL, { method: 'POST', body: new FormData(formGSheet)})
+                .then(response => {
+                    // Update Local Storage (Untuk Chat Bubble Real-time)
+                    const now = new Date();
+                    const timeStr = now.toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
 
-            renderChat(STORAGE_KEY);
-            rsvpForm.reset();
-            cancelReplyChat();
-            showToast("Terima kasih atas ucapan dan doanya!");
+                    const entry = { 
+                        id: Date.now().toString(), 
+                        nama, kehadiran, pesan,
+                        waktu: timeStr,
+                        replyTo: replyToId 
+                    };
+                    
+                    const existingData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                    existingData.push(entry); 
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(existingData));
 
-            const chatList = document.getElementById('wishes-list');
-            if(chatList) setTimeout(() => chatList.scrollTop = chatList.scrollHeight, 100);
+                    renderChat(STORAGE_KEY);
+                    rsvpForm.reset();
+                    cancelReplyChat();
+                    showToast("Terima kasih atas ucapan dan doanya!");
+
+                    const chatList = document.getElementById('wishes-list');
+                    if(chatList) setTimeout(() => chatList.scrollTop = chatList.scrollHeight, 100);
+
+                    // Kembalikan Tombol ke semula
+                    btnSubmitRsvp.innerHTML = originalBtnText;
+                    btnSubmitRsvp.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    showToast("Terjadi kesalahan, gagal mengirim ucapan.");
+                    btnSubmitRsvp.innerHTML = originalBtnText;
+                    btnSubmitRsvp.disabled = false;
+                });
         });
     }
 
@@ -326,7 +352,6 @@ window.cancelReplyChat = function() {
     if(rsvpMsg) rsvpMsg.placeholder = "Tuliskan doa & ucapan...";
 };
 
-// Modifikasi Logika Expand Story 
 window.expandStory = function() {
     const content = document.getElementById('story-full');
     const btn = document.querySelector('.btn-expand');
@@ -334,11 +359,9 @@ window.expandStory = function() {
 
     if (content.classList.contains('hidden')) {
         content.classList.remove('hidden');
-        // Ikon Heart Tetap Muncul saat ditutup
         btn.innerHTML = '<i class="fas fa-heart"></i> Tutup Cerita <i class="fas fa-chevron-up"></i>';
     } else {
         content.classList.add('hidden');
-        // Ikon Heart Tetap Muncul saat dilihat
         btn.innerHTML = '<i class="fas fa-heart"></i> Lihat Cerita <i class="fas fa-chevron-down"></i>';
     }
 };

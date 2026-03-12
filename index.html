@@ -49,11 +49,28 @@
         <main id="main-content" class="hidden">
 
             <section id="hero" class="section reveal fade-up">
-                <div class="hero-overlay"></div>
                 <div class="hero-content fade-in-up">
-                    <p class="subtitle">The Wedding Of</p>
+                    <div class="hero-img-frame">
+                        <img src="assets/img/hero.jpeg" alt="Zumrotus & Arrosid">
+                    </div>
+                    <p class="subtitle mt-3">The Wedding Of</p>
                     <h1 class="couple-name-large">Zumrotus <br>&<br>Arrosid </h1>
                     <p class="date">05 . 04 . 2026</p>
+
+                    <div id="countdown" class="countdown mt-3">
+                        <div class="time-box"><span id="days">00</span><small>Hari</small></div>
+                        <div class="time-box"><span id="hours">00</span><small>Jam</small></div>
+                        <div class="time-box"><span id="minutes">00</span><small>Menit</small></div>
+                        <div class="time-box"><span id="seconds">00</span><small>Detik</small></div>
+                    </div>
+                    
+                    <div class="calendar-options mt-4">
+                        <div class="cal-buttons">
+                            <a href="#" id="btn-google-cal" target="_blank" class="btn-cal"><i class="fab fa-google"></i> Google</a>
+                            <a href="#" id="btn-apple-cal" class="btn-cal"><i class="fab fa-apple"></i> Apple</a>
+                            <a href="#" id="btn-outlook-cal" class="btn-cal"><i class="fab fa-windows"></i> Outlook</a>
+                        </div>
+                    </div>
                 </div>
             </section>
             
@@ -118,33 +135,6 @@
                 </div>
             </section>
 
-            <section id="savethedate" class="section reveal fade-up">
-                <div class="save-date-container text-center">
-                    <h2>Save The Date</h2>
-                    <div class="date-info">
-                        <p class="big-date">05 . 04 . 2026</p>
-                        <p style="font-size: 1.3rem;">Pukul 08:00 WIB s/d Selesai</p>
-                        <p style="font-size: 1.3rem;">GOR Jatimekar, Baleendah, Bandung</p>
-                    </div>
-
-                    <div id="countdown" class="countdown mt-3">
-                        <div class="time-box"><span id="days">00</span><small>Hari</small></div>
-                        <div class="time-box"><span id="hours">00</span><small>Jam</small></div>
-                        <div class="time-box"><span id="minutes">00</span><small>Menit</small></div>
-                        <div class="time-box"><span id="seconds">00</span><small>Detik</small></div>
-                    </div>
-                    
-                    <div class="calendar-options mt-4">
-                        <p style="font-size: 1.2rem;">Tambahkan ke Kalender:</p>
-                        <div class="cal-buttons">
-                            <a href="#" id="btn-google-cal" target="_blank" class="btn-cal"><i class="fab fa-google"></i> Google</a>
-                            <a href="#" id="btn-apple-cal" class="btn-cal"><i class="fab fa-apple"></i> Apple</a>
-                            <a href="#" id="btn-outlook-cal" class="btn-cal"><i class="fab fa-windows"></i> Outlook</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <section id="gallery" class="section reveal fade-up">
                 <div class="section-title text-center">
                     <h2>Galeri</h2>
@@ -172,11 +162,11 @@
                 
                 <div class="story-card">
                     <img src="assets/img/story.jpeg" alt="Story Cover" class="story-img">
-                    <div class="story-summary text-center pb-0">
+                    <div class="story-summary text-center pb-0 mt-3">
                         <p class="text-muted" style="font-size: 1.3rem;">Setiap cerita memiliki permulaannya sendiri...</p>
                     </div>
                     
-                    <button class="btn-primary btn-expand w-100 mt-3" onclick="expandStory()" style="border-radius: 0;">
+                    <button class="btn-primary btn-expand w-100 mt-3" onclick="expandStory()" style="border-radius: 4px;">
                         <i class="fas fa-heart"></i> Lihat Cerita <i class="fas fa-chevron-down"></i>
                     </button>
                     
@@ -290,15 +280,21 @@
                     <h2>RSVP & Ucapan</h2>
                 </div>
 
-                <form id="rsvp-form" class="rsvp-form">
-                    <input type="text" id="rsvp-name" placeholder="Nama Anda" required style="font-family: inherit;">
-                    <select id="rsvp-attendance" required style="font-family: inherit;">
+                <form id="rsvp-form" class="rsvp-form" name="submit-to-google-sheet">
+                    <input type="text" id="rsvp-name" name="nama" placeholder="Nama Anda" required style="font-family: inherit;">
+                    <select id="rsvp-attendance" name="kehadiran" required style="font-family: inherit;">
                         <option value="" disabled selected>Konfirmasi Kehadiran</option>
                         <option value="Hadir">Hadir</option>
                         <option value="Tidak Hadir">Tidak Hadir</option>
                     </select>
-                    <textarea id="rsvp-message" rows="4" placeholder="Tuliskan doa & ucapan..." required style="font-family: inherit;"></textarea>
-                    <button type="submit" class="btn-primary w-100 mt-2"><i class="fas fa-paper-plane"></i> Kirim Ucapan</button>
+                    <select id="rsvp-jumlah" name="jumlah" required style="font-family: inherit;">
+                        <option value="" disabled selected>Jumlah Tamu</option>
+                        <option value="1 Orang">1 Orang</option>
+                        <option value="2 Orang">2 Orang</option>
+                        <option value="Lebih dari 2">Lebih dari 2</option>
+                    </select>
+                    <textarea id="rsvp-message" name="pesan" rows="4" placeholder="Tuliskan doa & ucapan..." required style="font-family: inherit;"></textarea>
+                    <button type="submit" id="btn-submit-rsvp" class="btn-primary w-100 mt-2"><i class="fas fa-paper-plane"></i> Kirim Ucapan</button>
                 </form>
 
                 <div class="wishes-list mt-4" id="wishes-list">

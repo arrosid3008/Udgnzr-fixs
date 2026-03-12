@@ -28,7 +28,7 @@
     --tape-bg: rgba(255, 255, 255, 0.1);
 }
 
-/* BASE & PAPER TEXTURE */
+/* BASE & PAPER TEXTURE ORIGINAL (Website Background) */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -96,6 +96,41 @@ h1, h2, h3, .closing-names, .person h3, .couple-name-large, #guest-name {
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'%3E%3Cpath d='M0,10 Q15,0 30,10 T60,10 T90,10 T100,10' fill='none' stroke='%23b89152' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;
     background-size: contain;
 }
+
+/* ====================================================
+   KHUSUS: EFEK TEKSTUR REAL PAPER UNTUK CARD SAJA
+   ==================================================== */
+.person, .event-card, .story-card, .atm-card, .rsvp-form {
+    background-color: var(--card-bg);
+    /* Layer 1: Pencahayaan menyudut (membuat card terasa timbul/terang)
+       Layer 2: Efek bercak/marmer halus khas kertas mahal (baseFrequency kecil)
+       Layer 3: Efek serat mikroskopis kertas (baseFrequency besar) */
+    background-image: 
+        linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 100%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+    background-blend-mode: normal, multiply, multiply;
+    
+    /* Memperkuat bayangan agar terpisah dari background web
+       Inner shadow (putih) memberikan list terang (rim light) yang elegan */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.7) inset !important;
+    border: 1px solid var(--border-color);
+}
+
+/* Penyesuaian khusus Dark Mode agar Card tetap nyata tapi gelap elegan */
+.dark-mode .person, 
+.dark-mode .event-card, 
+.dark-mode .story-card, 
+.dark-mode .atm-card, 
+.dark-mode .rsvp-form {
+    background-image: 
+        linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+    background-blend-mode: normal, overlay, overlay;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.04) inset !important;
+}
+/* ==================================================== */
 
 /* BUTTONS */
 button { font-family: inherit; cursor: pointer; border: none; outline: none; }
@@ -170,15 +205,43 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 }
 #guest-name { color: var(--accent); font-size: 2.5rem; margin-top: 5px; }
 
+/* REVISI HERO SECTION */
 #hero { 
-    height: 100vh; 
-    background: linear-gradient(to bottom, rgba(20, 18, 16, 0.4) 0%, rgba(20, 18, 16, 0.9) 100%), url(assets/img/hero.jpeg) center/cover no-repeat fixed; 
+    min-height: 100vh; 
     display: flex; align-items: center; justify-content: center; text-align: center; 
-    padding: 0 20px; opacity: 0; transform: translateY(20px); transition: all 1.5s ease; 
+    padding: 4rem 20px; opacity: 0; transform: translateY(20px); transition: all 1.5s ease; 
+    position: relative;
 }
-.hero-content { position: relative; z-index: 2; max-width: 700px; color: #fdfbf7; }
-.subtitle { font-family: 'Playfair Display', serif; font-size: 1.1rem; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 20px; }
-.couple-name-large { font-size: clamp(3.5rem, 10vw, 6rem); line-height: 1.1; color: var(--accent); margin-bottom: 1.5rem; text-shadow: 2px 4px 15px rgba(0,0,0,0.8); }
+.hero-content { position: relative; z-index: 2; width: 100%; color: var(--text-main); }
+
+/* Frame elegan untuk foto Hero */
+.hero-img-frame {
+    width: 260px;
+    height: 360px;
+    margin: 0 auto 1.5rem;
+    border-radius: 130px 130px 10px 10px; 
+    border: 3px solid var(--accent);
+    padding: 6px;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+    animation: floatFrame 4s ease-in-out infinite;
+}
+@keyframes floatFrame {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.hero-img-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 120px 120px 6px 6px;
+    filter: contrast(1.05) sepia(0.1);
+}
+
+.subtitle { font-family: 'Playfair Display', serif; font-size: 1.1rem; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 10px; }
+.couple-name-large { font-size: clamp(3.5rem, 10vw, 5.5rem); line-height: 1.1; color: var(--accent); margin-bottom: 1rem; }
 .date { font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 10px; }
 #hero.hero-active { opacity: 1; transform: translateY(0); }
 
@@ -190,12 +253,9 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 /* COUPLE POLAROID STYLE */
 .couple-wrapper { display: flex; flex-direction: column; gap: 50px; align-items: center; text-align: center; margin-top: 2rem;}
 .person {
-    background: var(--card-bg);
     padding: 15px 15px 25px 15px;
     border-radius: 4px;
-    box-shadow: var(--shadow);
     position: relative;
-    border: 1px solid var(--border-color);
     width: 85%;
     transform: rotate(-2deg);
     transition: transform 0.4s ease;
@@ -214,41 +274,36 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 .person-img { width: 100%; aspect-ratio: 1; overflow: hidden; margin: 0 auto 15px; border: 1px solid var(--border-color); }
 .person-img img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.2) contrast(1.1); transition: 0.5s; }
 .person:hover .person-img img { transform: scale(1.05); filter: sepia(0); }
-.person h3 { font-size: 2rem; margin-bottom: 5px; font-family: 'Caveat', cursive; font-size: 2.5rem;}
+.person h3 { font-size: 2.5rem; margin-bottom: 5px; font-family: 'Caveat', cursive; }
 .ig-link { font-family: sans-serif; font-size: 0.9rem; color: var(--accent); text-decoration: none; display: inline-flex; gap: 5px; margin-top: 10px; padding-bottom: 2px; border-bottom: 1px dashed var(--accent);}
 .and-symbol { font-size: 5rem; font-family: 'Caveat', cursive; color: var(--accent); opacity: 0.6; }
 
 /* EVENT CARDS - SCRAPBOOK STYLE */
 .event-card { 
-    background: var(--card-bg); padding: 40px 25px; border-radius: 4px; 
-    text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border-color); 
+    padding: 40px 25px; border-radius: 4px; 
+    text-align: center; 
     margin-bottom: 35px; position: relative; transition: 0.3s; 
 }
 .event-card::after { 
     content: ''; position: absolute; inset: 6px; 
     border: 1px dashed var(--border-color); pointer-events: none; 
 }
-.event-card h3 { font-size: 2.2rem; margin-bottom: 20px; font-family: 'Caveat', cursive; font-size: 2.8rem;}
+.event-card h3 { font-size: 2.8rem; margin-bottom: 20px; font-family: 'Caveat', cursive;}
 .event-card p { font-size: 1.3rem; margin-bottom: 12px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 10px; }
 
-/* SAVE THE DATE */
-.save-date-container { 
-    background: transparent; border: 2px dashed var(--accent); 
-    padding: 40px 20px; border-radius: 8px; position: relative; 
-}
-.big-date { font-size: 3.5rem; font-family: 'Playfair Display', serif; color: var(--accent); margin: 15px 0; }
-.countdown { display: flex; justify-content: center; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+/* COUNTDOWN (Dipindah ke Hero) */
+.countdown { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .time-box { 
-    background: var(--card-bg); padding: 15px 10px; border-radius: 4px; 
-    min-width: 70px; box-shadow: var(--shadow); border: 1px solid var(--border-color); 
+    background: transparent; padding: 10px; border-radius: 4px; 
+    min-width: 65px; border: 1px solid var(--accent); 
     position: relative;
 }
-.time-box span { display: block; font-size: 2.2rem; font-family: 'Playfair Display', serif; color: var(--text-main); }
+.time-box span { display: block; font-size: 1.8rem; font-family: 'Playfair Display', serif; color: var(--text-main); line-height: 1; margin-bottom: 5px; }
 .time-box small { font-size: 1rem; font-family: 'Caveat', cursive; color: var(--accent); }
 
-.cal-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-.btn-cal { font-family: sans-serif; background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-.btn-cal:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
+.cal-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.btn-cal { font-family: sans-serif; background: var(--bg-secondary); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 30px; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+.btn-cal:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); background: var(--card-bg); }
 
 /* GALLERY - POLAROID SCATTER */
 .swiper { width: 100%; padding-bottom: 60px; padding-top: 20px;}
@@ -265,7 +320,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 .swiper-pagination-bullet-active { background: var(--accent); transform: scale(1.3); }
 
 /* STORY */
-.story-card { background: var(--card-bg); border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border-color); position: relative; padding: 15px; }
+.story-card { border-radius: 4px; overflow: hidden; position: relative; padding: 15px; }
 .story-img { width: 100%; height: 300px; object-fit: cover; border-radius: 2px; filter: sepia(0.3); }
 .timeline-container { position: relative; padding-left: 25px; margin-bottom: 30px; margin-top: 20px;}
 .timeline-container::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: dashed 1px var(--accent); border-left: 2px dashed var(--accent); }
@@ -277,7 +332,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 /* GIFT SECTION */
 .gift-container { transition: 0.5s ease; }
 .gift-container.hidden-anim { opacity: 0; transform: translateY(20px); position: absolute; visibility: hidden; }
-.atm-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 25px; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: 0.3s; }
+.atm-card { border-radius: 4px; padding: 25px; position: relative; overflow: hidden; transition: 0.3s; }
 .gift-header { display: flex; justify-content: space-between; align-items: center; }
 .gift-icon-box { font-size: 1.8rem; color: var(--accent); }
 .gift-title-text h4 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 2px; }
@@ -291,7 +346,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 .btn-copy-atm:hover { border-color: var(--accent); color: var(--accent); }
 
 /* RSVP & CHAT BUBBLE */
-.rsvp-form { background: var(--card-bg); padding: 30px 20px; border-radius: 4px; border: 1px solid var(--border-color); box-shadow: var(--shadow); position: relative;}
+.rsvp-form { padding: 30px 20px; border-radius: 4px; position: relative;}
 .rsvp-form::before { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(2deg); width: 60px; height: 20px; background: var(--tape-bg); border: 1px solid rgba(0,0,0,0.05); }
 .rsvp-form input, .rsvp-form select, .rsvp-form textarea { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px dashed var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-main); font-family: sans-serif; font-size: 0.95rem; transition: 0.3s; }
 .rsvp-form input:focus, .rsvp-form select:focus, .rsvp-form textarea:focus { outline: none; border-style: solid; border-color: var(--accent); background: var(--card-bg); }
@@ -321,7 +376,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 .toast i { color: var(--accent); }
 .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
-/* ANIMATIONS (SMOOTH & LIGHT) */
+/* ANIMATIONS */
 .reveal { opacity: 0; will-change: transform, opacity; transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1); }
 .reveal.active { opacity: 1; transform: translate(0, 0); }
 .fade-up { transform: translateY(30px); }
@@ -329,7 +384,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 .slide-left { transform: translateX(30px); }
 .delay-1 { transition-delay: 0.2s; }
 
-/* MAGIC DUST & CONFETTI (TWEAKED TO GOLDEN VINTAGE) */
+/* MAGIC DUST & CONFETTI */
 #particles-container { position: fixed; inset: 0; z-index: 997; pointer-events: none; overflow: hidden; }
 .magic-dust { position: absolute; top: -10%; border-radius: 50%; background: var(--accent); opacity: 0.6; animation: fallDust linear forwards; }
 @keyframes fallDust { 0% { transform: translate3d(0, -5vh, 0); opacity: 0; } 20% { opacity: 0.6; } 80% { opacity: 0.6; } 100% { transform: translate3d(var(--sway-x), 105vh, 0); opacity: 0; } }
